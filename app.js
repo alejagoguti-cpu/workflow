@@ -1,14 +1,15 @@
 /**
- * Magnific AI Studio | Core Engine & Interactive UI/UX Logic
- * Faithful to Magnific.ai & Upstairs Architectural Visuals
+ * Magnific Spaces | Node Graph Architecture Engine
+ * Pure White Canvas with Dynamic Bezier Connecting Cables
+ * Based on Upstairs ("I Finally Found an AI Workflow That Actually Fits Archviz")
  */
 
 document.addEventListener('DOMContentLoaded', () => {
   initSliderStyles();
-  initMagnificApp();
+  initSpacesCanvas();
 });
 
-// Sync Range Sliders for CSS Variables (Modern Web Guidance)
+// Modern Web Guidance Range Slider Sync
 function initSliderStyles() {
   const sliders = document.querySelectorAll('input[type="range"]');
   sliders.forEach(slider => {
@@ -25,611 +26,515 @@ function initSliderStyles() {
   });
 }
 
-function initMagnificApp() {
-  // Elements
-  const canvasOrig = document.getElementById('canvas-original');
-  const canvasMag = document.getElementById('canvas-magnified');
-  const stage = document.getElementById('viewport-stage');
-  const wrapper = document.getElementById('split-canvas-wrapper');
-  const divider = document.getElementById('split-divider');
-  const lens = document.getElementById('magnific-lens');
-  const loader = document.getElementById('magnific-loader');
-  const historyList = document.getElementById('history-list');
-  const tokenCountEl = document.getElementById('token-count');
+function initSpacesCanvas() {
+  const viewport = document.getElementById('canvas-viewport');
+  const world = document.getElementById('canvas-world');
+  const svgLayer = document.getElementById('connections-layer');
 
-  if (!canvasOrig || !canvasMag || !wrapper || !divider || !lens) return;
+  // Canvas Pan & Zoom State
+  let panX = 40;
+  let panY = 40;
+  let scale = 1.0;
+  let isPanning = false;
+  let startX = 0;
+  let startY = 0;
 
-  const ctxOrig = canvasOrig.getContext('2d');
-  const ctxMag = canvasMag.getContext('2d');
+  // Nodes Dragging State
+  let activeDragNode = null;
+  let nodeOffsetX = 0;
+  let nodeOffsetY = 0;
 
-  // Application State
-  const state = {
-    mode: 'upscale', // 'upscale' | 'relight' | 'spaces' | 'video'
-    viewMode: 'split', // 'split' | 'lens' | 'sidebyside'
-    presetScene: 'courtyard',
-    customImage: null,
-    // Scale factor
-    scaleFactor: '4x',
-    // Sliders
+  // Pipeline execution state
+  let tokens = 2480;
+  const tokenValEl = document.getElementById('token-val');
+
+  // Node Parameters State
+  const graphState = {
+    scene: 'courtyard',
+    lighting: 'midday',
+    shadowIntensity: 0.75,
+    charStyle: 'architect',
+    peopleBlend: 0.85,
+    engine: 'precision',
     creativity: 2,
     resemblance: 8,
     fractality: 3,
-    engine: 'precision',
-    prompt: '',
-    // Relight / People state
-    charX: 620,
-    charY: 530,
-    charStyle: 'architect',
-    peopleBlend: 0.85,
-    isDraggingChar: false,
-    dragStartX: 0,
-    dragStartY: 0,
-    // Spaces state
-    spaceLight: 'midday',
-    // Video state
-    vidMode: 'timelapse',
-    // UI Split Divider state
-    splitPercent: 50,
-    isDraggingDivider: false,
-    tokens: 2480,
-    // History
-    history: []
+    splitPercent: 50
   };
 
-  // 1. Initial Prompt for Architecture
-  const promptInput = document.getElementById('prompt-input');
-  promptInput.value = 'Architectural courtyard plaza, board-formed concrete porosity, micro air pockets, sharp cast-shadows, candid European architects in contemporary linen coats, photorealistic 8K render.';
-  state.prompt = promptInput.value;
+  // Pre-defined Connections (fromPortId -> toPortId)
+  const connections = [
+    { from: 'node-1-out', to: 'node-2-in' },
+    { from: 'node-1-out', to: 'node-3-in' },
+    { from: 'node-2-out', to: 'node-4-in' },
+    { from: 'node-4-out', to: 'node-5-in' }
+  ];
 
-  // 2. Mode Navigation Switcher
-  const modeTabs = document.querySelectorAll('.mode-tab');
-  modeTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      modeTabs.forEach(t => {
-        t.classList.remove('active');
-        t.setAttribute('aria-selected', 'false');
-      });
-      tab.classList.add('active');
-      tab.setAttribute('aria-selected', 'true');
-      state.mode = tab.getAttribute('data-mode');
-
-      // Update mode-specific UI card
-      updateModeSpecificCard();
-      renderAll();
-    });
-  });
-
-  function updateModeSpecificCard() {
-    const cardTitle = document.getElementById('mode-specific-title');
-    const peopleGroup = document.getElementById('people-options-group');
-    const spacesGroup = document.getElementById('spaces-options-group');
-    const videoGroup = document.getElementById('video-options-group');
-
-    peopleGroup.style.display = 'none';
-    spacesGroup.style.display = 'none';
-    videoGroup.style.display = 'none';
-
-    if (state.mode === 'relight') {
-      cardTitle.textContent = 'Relight & Scale Figures (Entourage)';
-      peopleGroup.style.display = 'block';
-    } else if (state.mode === 'spaces') {
-      cardTitle.textContent = 'Spaces: Lighting Scenarios & Reframe';
-      spacesGroup.style.display = 'block';
-    } else if (state.mode === 'video') {
-      cardTitle.textContent = 'Video & Atmospheric Clips';
-      videoGroup.style.display = 'block';
-    } else {
-      cardTitle.textContent = 'Precision Material & Edge Controls';
-      peopleGroup.style.display = 'block';
-    }
+  // 1. Pan and Zoom Handling
+  function updateWorldTransform() {
+    world.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+    document.getElementById('zoom-level').textContent = `${Math.round(scale * 100)}%`;
   }
 
-  // 3. Scale Factor Buttons
-  const scaleBtns = document.querySelectorAll('.scale-btn');
-  const resBadge = document.getElementById('resolution-badge');
-  const metaScale = document.getElementById('meta-scale');
-  const resMap = {
-    '2x': '2560 × 1600 (2K)',
-    '4x': '3840 × 2400 (4K)',
-    '8x': '7680 × 4800 (8K)',
-    '16x': '15360 × 9600 (Cinema 16K)'
-  };
-
-  scaleBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      scaleBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      state.scaleFactor = btn.getAttribute('data-scale');
-      resBadge.textContent = resMap[state.scaleFactor] || state.scaleFactor;
-      metaScale.textContent = `${state.scaleFactor} (${resMap[state.scaleFactor]})`;
-    });
-  });
-
-  // 4. Sliders (Creativity, Resemblance, Fractality)
-  const creatSlider = document.getElementById('slider-creativity');
-  const creatVal = document.getElementById('creativity-val');
-  const metaCreat = document.getElementById('meta-creativity');
-  creatSlider.addEventListener('input', (e) => {
-    state.creativity = parseInt(e.target.value, 10);
-    creatVal.textContent = state.creativity;
-    if (state.creativity <= 3) {
-      metaCreat.textContent = `${state.creativity} (Fidelidad 100%)`;
-      metaCreat.style.color = 'var(--accent-emerald)';
-    } else if (state.creativity <= 5) {
-      metaCreat.textContent = `${state.creativity} (Moderado)`;
-      metaCreat.style.color = 'var(--accent-amber)';
-    } else {
-      metaCreat.textContent = `${state.creativity} (Alucinación Alta)`;
-      metaCreat.style.color = 'var(--accent-rose)';
+  viewport.addEventListener('mousedown', (e) => {
+    // Only pan if clicking on empty canvas background (not on a node or button)
+    if (e.target === viewport || e.target === world || e.target === svgLayer) {
+      isPanning = true;
+      viewport.classList.add('panning');
+      startX = e.clientX - panX;
+      startY = e.clientY - panY;
     }
   });
 
-  const resemSlider = document.getElementById('slider-resemblance');
-  const resemVal = document.getElementById('resemblance-val');
-  const metaResem = document.getElementById('meta-resemblance');
-  resemSlider.addEventListener('input', (e) => {
-    state.resemblance = parseInt(e.target.value, 10);
-    resemVal.textContent = state.resemblance;
-    metaResem.textContent = state.resemblance;
+  window.addEventListener('mousemove', (e) => {
+    if (isPanning) {
+      panX = e.clientX - startX;
+      panY = e.clientY - startY;
+      updateWorldTransform();
+    }
   });
 
-  const fracSlider = document.getElementById('slider-fractality');
-  const fracVal = document.getElementById('fractality-val');
-  fracSlider.addEventListener('input', (e) => {
-    state.fractality = parseInt(e.target.value, 10);
-    fracVal.textContent = state.fractality;
+  window.addEventListener('mouseup', () => {
+    isPanning = false;
+    viewport.classList.remove('panning');
   });
 
-  // Engine Select
-  const engineSelect = document.getElementById('engine-select');
-  const metaEngine = document.getElementById('meta-engine');
-  engineSelect.addEventListener('change', (e) => {
-    state.engine = e.target.value;
-    const names = {
-      precision: 'Precision Archviz',
-      sharpy: 'Sharpy',
-      sparkle: 'Sparkle',
-      illusio: 'Illusio'
-    };
-    metaEngine.textContent = names[state.engine] || state.engine;
+  // Wheel Zoom
+  viewport.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const zoomFactor = 1.1;
+    if (e.deltaY < 0) {
+      scale = Math.min(2.0, scale * zoomFactor);
+    } else {
+      scale = Math.max(0.4, scale / zoomFactor);
+    }
+    updateWorldTransform();
+  }, { passive: false });
+
+  // Zoom Buttons
+  document.getElementById('btn-zoom-in').addEventListener('click', () => {
+    scale = Math.min(2.0, scale * 1.15);
+    updateWorldTransform();
+  });
+  document.getElementById('btn-zoom-out').addEventListener('click', () => {
+    scale = Math.max(0.4, scale / 1.15);
+    updateWorldTransform();
+  });
+  document.getElementById('btn-reset-view').addEventListener('click', () => {
+    panX = 40;
+    panY = 40;
+    scale = 1.0;
+    updateWorldTransform();
   });
 
-  // Enhance Prompt Button
-  document.getElementById('btn-enhance-prompt').addEventListener('click', () => {
-    const archEnhancements = [
-      'sharp cast-shadows on board-formed concrete seams',
-      'low-iron double-glazed facade reflections',
-      'candid European architects conversing in plaza',
-      'natural textile linen drape and soft floor contact occlusion',
-      'micro-roughness 8k Hasselblad 35mm lens perspective'
-    ];
-    promptInput.value = `${promptInput.value.trim()}, ${archEnhancements[Math.floor(Math.random() * archEnhancements.length)]}`;
-    state.prompt = promptInput.value;
-  });
+  // 2. Node Dragging Logic
+  const nodes = document.querySelectorAll('.space-node');
+  nodes.forEach(node => {
+    const header = node.querySelector('.node-header');
+    header.addEventListener('mousedown', (e) => {
+      e.stopPropagation();
+      activeDragNode = node;
+      node.classList.add('dragging');
 
-  // Presets
-  document.querySelectorAll('[data-preset-scene]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('[data-preset-scene]').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      state.presetScene = btn.getAttribute('data-preset-scene');
-      state.customImage = null;
-      document.getElementById('loaded-thumb').style.display = 'none';
-      document.getElementById('dropzone-empty').style.display = 'block';
-      renderAll();
+      const rect = node.getBoundingClientRect();
+      nodeOffsetX = (e.clientX - rect.left) / scale;
+      nodeOffsetY = (e.clientY - rect.top) / scale;
     });
   });
 
-  // File Upload
-  const dropzone = document.getElementById('dropzone');
-  const fileInput = document.getElementById('image-upload');
-  dropzone.addEventListener('click', () => fileInput.click());
+  window.addEventListener('mousemove', (e) => {
+    if (!activeDragNode) return;
+    const viewportRect = viewport.getBoundingClientRect();
+    const worldMouseX = (e.clientX - viewportRect.left - panX) / scale;
+    const worldMouseY = (e.clientY - viewportRect.top - panY) / scale;
 
-  fileInput.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const img = new Image();
-      img.onload = () => {
-        state.customImage = img;
-        const thumb = document.getElementById('loaded-thumb');
-        thumb.src = event.target.result;
-        thumb.style.display = 'block';
-        document.getElementById('dropzone-empty').style.display = 'none';
-        renderAll();
-      };
-      img.src = event.target.result;
-    };
-    reader.readAsDataURL(file);
+    const newX = worldMouseX - nodeOffsetX;
+    const newY = worldMouseY - nodeOffsetY;
+
+    activeDragNode.style.left = `${newX}px`;
+    activeDragNode.style.top = `${newY}px`;
+
+    // Redraw SVG cables dynamically as nodes move
+    drawConnections();
   });
 
-  // 5. Vertical Split Divider Dragging (The Iconic Magnific Interaction)
+  window.addEventListener('mouseup', () => {
+    if (activeDragNode) {
+      activeDragNode.classList.remove('dragging');
+      activeDragNode = null;
+      drawConnections();
+    }
+  });
+
+  // 3. Draw Bezier Cables between Ports
+  function drawConnections() {
+    // Clear old cables
+    svgLayer.querySelectorAll('.wire-cable').forEach(c => c.remove());
+
+    const worldRect = world.getBoundingClientRect();
+
+    connections.forEach(conn => {
+      const fromEl = document.querySelector(`[data-port-id="${conn.from}"] .port-dot`);
+      const toEl = document.querySelector(`[data-port-id="${conn.to}"] .port-dot`);
+
+      if (!fromEl || !toEl) return;
+
+      const fromRect = fromEl.getBoundingClientRect();
+      const toRect = toEl.getBoundingClientRect();
+
+      // Compute coordinates relative to world canvas
+      const x1 = (fromRect.left + fromRect.width / 2 - worldRect.left) / scale;
+      const y1 = (fromRect.top + fromRect.height / 2 - worldRect.top) / scale;
+      const x2 = (toRect.left + toRect.width / 2 - worldRect.left) / scale;
+      const y2 = (toRect.top + toRect.height / 2 - worldRect.top) / scale;
+
+      // Cubic Bezier curve control points
+      const dx = Math.abs(x2 - x1) * 0.55;
+      const cx1 = x1 + dx;
+      const cy1 = y1;
+      const cx2 = x2 - dx;
+      const cy2 = y2;
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', `M ${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}`);
+      path.setAttribute('class', 'wire-cable');
+      svgLayer.appendChild(path);
+    });
+  }
+
+  // 4. Auto-Arrange Nodes in a Clean Left-to-Right Pipeline
+  document.getElementById('btn-auto-arrange').addEventListener('click', () => {
+    const layout = [
+      { id: 'node-1', x: 80, y: 180 },
+      { id: 'node-2', x: 480, y: 80 },
+      { id: 'node-3', x: 480, y: 390 },
+      { id: 'node-4', x: 920, y: 160 },
+      { id: 'node-5', x: 1380, y: 120 }
+    ];
+
+    layout.forEach(item => {
+      const el = document.getElementById(item.id);
+      if (el) {
+        el.style.left = `${item.x}px`;
+        el.style.top = `${item.y}px`;
+      }
+    });
+
+    panX = 30;
+    panY = 30;
+    scale = 0.95;
+    updateWorldTransform();
+    drawConnections();
+  });
+
+  // 5. Node 1 Thumb Rendering
+  function renderNode1Thumb() {
+    const c = document.getElementById('node-1-thumb');
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    drawArchitecturalScene(ctx, c.width, c.height, false);
+  }
+
+  // 6. Node 5 Interactive Split Viewer
+  const splitBox = document.getElementById('node-5-split-box');
+  const splitDivider = document.getElementById('node-5-divider');
+  const canvasOrig = document.getElementById('node-5-canvas-orig');
+  const canvasMag = document.getElementById('node-5-canvas-mag');
+
+  let isDraggingSplit = false;
+
   function updateSplitPosition(pct) {
     pct = Math.max(0, Math.min(100, pct));
-    state.splitPercent = pct;
-    divider.style.left = `${pct}%`;
+    graphState.splitPercent = pct;
+    splitDivider.style.left = `${pct}%`;
     canvasMag.style.clipPath = `polygon(${pct}% 0, 100% 0, 100% 100%, ${pct}% 100%)`;
   }
 
-  divider.addEventListener('mousedown', () => { state.isDraggingDivider = true; });
-  window.addEventListener('mousemove', (e) => {
-    if (state.isDraggingDivider && state.viewMode === 'split') {
-      const rect = wrapper.getBoundingClientRect();
-      const pct = ((e.clientX - rect.left) / rect.width) * 100;
-      updateSplitPosition(pct);
-    }
-  });
-  window.addEventListener('mouseup', () => { state.isDraggingDivider = false; });
-
-  // 6. View Mode Switching (Split, Lente 4X, Side-by-side)
-  const btnSplit = document.getElementById('btn-view-split');
-  const btnLens = document.getElementById('btn-view-lens');
-  const btnSide = document.getElementById('btn-view-sidebyside');
-
-  btnSplit.addEventListener('click', () => {
-    state.viewMode = 'split';
-    btnSplit.classList.add('active');
-    btnLens.classList.remove('active');
-    btnSide.classList.remove('active');
-    divider.style.display = 'block';
-    lens.style.display = 'none';
-    updateSplitPosition(50);
-  });
-
-  btnLens.addEventListener('click', () => {
-    state.viewMode = 'lens';
-    btnLens.classList.add('active');
-    btnSplit.classList.remove('active');
-    btnSide.classList.remove('active');
-    divider.style.display = 'none';
-    canvasMag.style.clipPath = 'none';
-  });
-
-  btnSide.addEventListener('click', () => {
-    state.viewMode = 'sidebyside';
-    btnSide.classList.add('active');
-    btnSplit.classList.remove('active');
-    btnLens.classList.remove('active');
-    divider.style.display = 'none';
-    canvasMag.style.clipPath = 'polygon(50% 0, 100% 0, 100% 100%, 50% 100%)';
-  });
-
-  // Lente 4X Magnifier Movement
-  wrapper.addEventListener('mouseenter', () => {
-    if (state.viewMode === 'lens') lens.style.display = 'block';
-  });
-  wrapper.addEventListener('mouseleave', () => {
-    if (state.viewMode === 'lens') lens.style.display = 'none';
-  });
-
-  wrapper.addEventListener('mousemove', (e) => {
-    if (state.viewMode !== 'lens') return;
-    const rect = wrapper.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    lens.style.left = `${x}px`;
-    lens.style.top = `${y}px`;
-
-    const zoom = 2.6;
-    lens.style.backgroundImage = `url(${canvasMag.toDataURL()})`;
-    lens.style.backgroundSize = `${rect.width * zoom}px ${rect.height * zoom}px`;
-    lens.style.backgroundPosition = `-${x * zoom - 85}px -${y * zoom - 85}px`;
-  });
-
-  // Character Dragging on Viewport
-  wrapper.addEventListener('mousedown', (e) => {
-    if (state.viewMode !== 'split' && state.viewMode !== 'lens') return;
-    const rect = wrapper.getBoundingClientRect();
-    const sx = canvasOrig.width / rect.width;
-    const sy = canvasOrig.height / rect.height;
-    const mx = (e.clientX - rect.left) * sx;
-    const my = (e.clientY - rect.top) * sy;
-
-    const dist = Math.hypot(mx - state.charX, my - state.charY);
-    if (dist < 100) {
-      state.isDraggingChar = true;
-      state.dragStartX = mx - state.charX;
-      state.dragStartY = my - state.charY;
-    }
+  splitDivider.addEventListener('mousedown', (e) => {
+    e.stopPropagation();
+    isDraggingSplit = true;
   });
 
   window.addEventListener('mousemove', (e) => {
-    if (!state.isDraggingChar) return;
-    const rect = wrapper.getBoundingClientRect();
-    const sx = canvasOrig.width / rect.width;
-    const sy = canvasOrig.height / rect.height;
-    state.charX = (e.clientX - rect.left) * sx - state.dragStartX;
-    state.charY = (e.clientY - rect.top) * sy - state.dragStartY;
-    renderAll();
+    if (!isDraggingSplit) return;
+    const rect = splitBox.getBoundingClientRect();
+    const pct = ((e.clientX - rect.left) / rect.width) * 100;
+    updateSplitPosition(pct);
   });
 
-  window.addEventListener('mouseup', () => { state.isDraggingChar = false; });
+  window.addEventListener('mouseup', () => { isDraggingSplit = false; });
 
-  // 7. Core Architectural Drawing Engine
-  function renderAll() {
-    renderCanvas(ctxOrig, false); // Original Clay / Base Render
-    renderCanvas(ctxMag, true);   // Magnified 8K Enhanced Render
+  function renderNode5Viewers() {
+    if (!canvasOrig || !canvasMag) return;
+    const ctxO = canvasOrig.getContext('2d');
+    const ctxM = canvasMag.getContext('2d');
+    drawArchitecturalScene(ctxO, canvasOrig.width, canvasOrig.height, false);
+    drawArchitecturalScene(ctxM, canvasMag.width, canvasMag.height, true);
   }
 
-  function renderCanvas(ctx, isEnhanced) {
-    ctx.clearRect(0, 0, 1280, 800);
+  // 7. Architectural Scene Procedural Renderer
+  function drawArchitecturalScene(ctx, w, h, isEnhanced) {
+    ctx.clearRect(0, 0, w, h);
 
-    // If Custom Image was uploaded
-    if (state.customImage) {
-      ctx.drawImage(state.customImage, 0, 0, 1280, 800);
-      if (isEnhanced) {
-        // Apply smart sharpness and specular overlay
-        ctx.fillStyle = 'rgba(6, 182, 212, 0.05)';
-        ctx.fillRect(0, 0, 1280, 800);
-      }
-      return;
-    }
+    // Sky & Lighting Environment
+    let skyTop = isEnhanced ? '#0284c7' : '#94a3b8';
+    let skyBottom = isEnhanced ? '#e0f2fe' : '#cbd5e1';
 
-    // Procedural Architectural Render
-    // 1. Sky & Sun
-    let skyTop = isEnhanced ? '#0284c7' : '#64748b';
-    let skyBottom = isEnhanced ? '#e0f2fe' : '#94a3b8';
-    if (state.spaceLight === 'golden') {
+    if (graphState.lighting === 'golden') {
       skyTop = '#4338ca';
       skyBottom = '#fb923c';
-    } else if (state.spaceLight === 'bluehour') {
+    } else if (graphState.lighting === 'bluehour') {
       skyTop = '#020617';
       skyBottom = '#1e1b4b';
+    } else if (graphState.lighting === 'rainy') {
+      skyTop = '#334155';
+      skyBottom = '#64748b';
     }
 
-    const sky = ctx.createLinearGradient(0, 0, 0, 460);
+    const sky = ctx.createLinearGradient(0, 0, 0, h * 0.6);
     sky.addColorStop(0, skyTop);
     sky.addColorStop(1, skyBottom);
     ctx.fillStyle = sky;
-    ctx.fillRect(0, 0, 1280, 460);
+    ctx.fillRect(0, 0, w, h * 0.6);
 
-    // Clouds (Crisper on enhanced)
-    ctx.fillStyle = isEnhanced ? 'rgba(255, 255, 255, 0.7)' : 'rgba(203, 213, 225, 0.4)';
-    ctx.beginPath();
-    ctx.ellipse(320, 140, 200, 45, 0, 0, Math.PI * 2);
-    ctx.ellipse(920, 110, 240, 50, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // 2. Ground Paving (Stone / Slate Plaza)
+    // Pavement
     ctx.fillStyle = isEnhanced ? '#334155' : '#475569';
-    ctx.beginPath();
-    ctx.moveTo(0, 440);
-    ctx.lineTo(1280, 420);
-    ctx.lineTo(1280, 800);
-    ctx.lineTo(0, 800);
-    ctx.closePath();
-    ctx.fill();
+    ctx.fillRect(0, h * 0.55, w, h * 0.45);
 
-    // Pavement Joints
+    // Expansion joints
     ctx.strokeStyle = isEnhanced ? '#1e293b' : '#334155';
-    ctx.lineWidth = isEnhanced ? 2 : 1;
-    for (let y = 460; y < 800; y += 50) {
+    ctx.lineWidth = isEnhanced ? 1.5 : 1;
+    for (let y = h * 0.58; y < h; y += 30) {
       ctx.beginPath();
       ctx.moveTo(0, y);
-      ctx.lineTo(1280, y - 20);
+      ctx.lineTo(w, y - 10);
       ctx.stroke();
     }
 
-    // Enhanced Puddle Reflections on wet stone
+    // Puddle on enhanced
     if (isEnhanced) {
-      ctx.fillStyle = 'rgba(2, 132, 199, 0.35)';
+      ctx.fillStyle = 'rgba(2, 132, 199, 0.4)';
       ctx.beginPath();
-      ctx.ellipse(420, 640, 180, 40, -0.1, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-      ctx.beginPath();
-      ctx.ellipse(410, 635, 90, 15, -0.1, 0, Math.PI * 2);
+      ctx.ellipse(w * 0.4, h * 0.8, w * 0.18, h * 0.05, -0.1, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    // 3. Architectural Massing (Gallery Pavilion)
+    // Building Wall
     ctx.fillStyle = isEnhanced ? '#94a3b8' : '#cbd5e1';
-    ctx.beginPath();
-    ctx.moveTo(180, 180);
-    ctx.lineTo(1100, 140);
-    ctx.lineTo(1100, 600);
-    ctx.lineTo(180, 620);
-    ctx.closePath();
-    ctx.fill();
+    ctx.fillRect(w * 0.15, h * 0.22, w * 0.72, h * 0.55);
 
-    // Board-formed Concrete Lines & Tie-Holes (Visible on Enhanced)
+    // Board-formed concrete seams (Enhanced only)
     if (isEnhanced) {
-      ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
-      ctx.lineWidth = 2;
-      for (let y = 220; y < 600; y += 70) {
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.35)';
+      ctx.lineWidth = 1.5;
+      for (let y = h * 0.28; y < h * 0.75; y += 35) {
         ctx.beginPath();
-        ctx.moveTo(180, y);
-        ctx.lineTo(1100, y - 30);
+        ctx.moveTo(w * 0.15, y);
+        ctx.lineTo(w * 0.87, y);
         ctx.stroke();
 
-        for (let x = 240; x < 1060; x += 130) {
+        for (let x = w * 0.22; x < w * 0.85; x += 55) {
           ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
           ctx.beginPath();
-          ctx.arc(x, y - 12, 5, 0, Math.PI * 2);
+          ctx.arc(x, y - 6, 2.5, 0, Math.PI * 2);
           ctx.fill();
         }
       }
     }
 
-    // Floor-to-Ceiling Curtain Glass
-    const glassGrad = ctx.createLinearGradient(280, 240, 1020, 560);
-    if (isEnhanced) {
-      glassGrad.addColorStop(0, 'rgba(186, 230, 253, 0.85)');
-      glassGrad.addColorStop(0.5, 'rgba(56, 189, 248, 0.6)');
-      glassGrad.addColorStop(1, 'rgba(3, 105, 161, 0.95)');
-    } else {
-      glassGrad.addColorStop(0, '#93c5fd');
-      glassGrad.addColorStop(1, '#60a5fa');
-    }
-    ctx.fillStyle = glassGrad;
-    ctx.fillRect(280, 260, 740, 310);
+    // Curtain Glazing
+    ctx.fillStyle = isEnhanced ? 'rgba(3, 105, 161, 0.85)' : '#93c5fd';
+    ctx.fillRect(w * 0.22, h * 0.32, w * 0.58, h * 0.4);
 
-    // Structural Mullions
+    // Mullions
     ctx.fillStyle = '#0f172a';
-    for (let x = 280; x <= 1020; x += 148) {
-      ctx.fillRect(x, 260, 10, 310);
+    for (let x = w * 0.22; x <= w * 0.8; x += w * 0.14) {
+      ctx.fillRect(x, h * 0.32, 4, h * 0.4);
     }
 
-    // Overhanging Roof Canopy
+    // Cantilever Roof
     ctx.fillStyle = isEnhanced ? '#f8fafc' : '#e2e8f0';
-    ctx.beginPath();
-    ctx.moveTo(120, 170);
-    ctx.lineTo(1160, 125);
-    ctx.lineTo(1170, 190);
-    ctx.lineTo(110, 235);
-    ctx.closePath();
-    ctx.fill();
+    ctx.fillRect(w * 0.1, h * 0.18, w * 0.82, 18);
 
-    // 4. Human Scale Figures (Entourage)
-    drawArchitecturalPerson(ctx, state.charX, state.charY, isEnhanced);
+    // Entourage Person
+    drawScalePerson(ctx, w * 0.62, h * 0.72, isEnhanced);
   }
 
-  function drawArchitecturalPerson(g, x, y, isEnhanced) {
+  function drawScalePerson(g, x, y, isEnhanced) {
     g.save();
     g.translate(x, y);
 
-    // Directional Ground Shadow
-    g.fillStyle = isEnhanced ? 'rgba(0, 0, 0, 0.55)' : 'rgba(0, 0, 0, 0.25)';
+    // Shadow
+    g.fillStyle = isEnhanced ? 'rgba(0, 0, 0, 0.6)' : 'rgba(0, 0, 0, 0.25)';
     g.beginPath();
-    g.ellipse(20, 75, 42, 12, -0.2, 0, Math.PI * 2);
-    if (isEnhanced) g.filter = 'blur(6px)';
-    g.fill();
-    g.filter = 'none';
-
-    // Person Silhouette with realistic drape on enhanced
-    // Trousers
-    g.fillStyle = isEnhanced ? '#1e293b' : '#334155';
-    g.fillRect(-10, 25, 8, 50);
-    g.fillRect(3, 25, 8, 50);
-
-    // Trench coat / Jacket
-    g.fillStyle = isEnhanced ? '#475569' : '#64748b';
-    g.beginPath();
-    g.moveTo(-18, -25);
-    g.lineTo(18, -25);
-    g.lineTo(24, 32);
-    g.lineTo(-24, 32);
-    g.closePath();
+    g.ellipse(10, 32, 18, 5, -0.2, 0, Math.PI * 2);
     g.fill();
 
-    if (isEnhanced) {
-      // Fabric folds highlight
-      g.strokeStyle = 'rgba(255, 255, 255, 0.35)';
-      g.lineWidth = 1.5;
-      g.beginPath();
-      g.moveTo(0, -22);
-      g.lineTo(4, 30);
-      g.stroke();
-    }
+    // Body
+    g.fillStyle = isEnhanced ? '#1e293b' : '#475569';
+    g.fillRect(-4, 10, 3.5, 22);
+    g.fillRect(1, 10, 3.5, 22);
+    g.fillRect(-8, -12, 16, 22);
 
     // Head
     g.fillStyle = '#fed7aa';
     g.beginPath();
-    g.arc(0, -38, 10, 0, Math.PI * 2);
+    g.arc(0, -18, 5, 0, Math.PI * 2);
     g.fill();
 
     g.restore();
   }
 
-  // 8. Magnify Button Action (Token deduction & Generation)
-  const btnMagnify = document.getElementById('btn-magnify');
-  btnMagnify.addEventListener('click', () => {
-    if (state.tokens < 5) {
+  // 8. Bind Node Controls
+  // Node 1 Scene
+  document.getElementById('node-1-scene-select').addEventListener('change', (e) => {
+    graphState.scene = e.target.value;
+    renderNode1Thumb();
+    renderNode5Viewers();
+  });
+
+  // Node 2 Lighting Chips
+  document.querySelectorAll('[data-light]').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('[data-light]').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      graphState.lighting = chip.getAttribute('data-light');
+      renderNode5Viewers();
+    });
+  });
+
+  document.getElementById('node-2-shadow').addEventListener('input', (e) => {
+    graphState.shadowIntensity = parseInt(e.target.value, 10) / 100;
+    document.getElementById('node-2-shadow-val').textContent = `${e.target.value}%`;
+    renderNode5Viewers();
+  });
+
+  // Node 3 People Chips
+  document.querySelectorAll('[data-char]').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('[data-char]').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      graphState.charStyle = chip.getAttribute('data-char');
+      renderNode5Viewers();
+    });
+  });
+
+  document.getElementById('node-3-blend').addEventListener('input', (e) => {
+    graphState.peopleBlend = parseInt(e.target.value, 10) / 100;
+    document.getElementById('node-3-blend-val').textContent = `${e.target.value}%`;
+    renderNode5Viewers();
+  });
+
+  // Node 4 Upscaler Controls
+  const creatSlider = document.getElementById('node-4-creat');
+  const creatVal = document.getElementById('node-4-creat-val');
+  creatSlider.addEventListener('input', (e) => {
+    graphState.creativity = parseInt(e.target.value, 10);
+    if (graphState.creativity <= 3) {
+      creatVal.textContent = `Nivel ${graphState.creativity} (Seguro)`;
+      creatVal.className = 'badge-safe';
+    } else {
+      creatVal.textContent = `Nivel ${graphState.creativity} (Alucinación)`;
+      creatVal.className = 'badge-safe';
+      creatVal.style.background = '#fef2f2';
+      creatVal.style.color = '#dc2626';
+      creatVal.style.borderColor = '#fca5a5';
+    }
+  });
+
+  document.getElementById('node-4-resem').addEventListener('input', (e) => {
+    graphState.resemblance = parseInt(e.target.value, 10);
+    document.getElementById('node-4-resem-val').textContent = graphState.resemblance;
+  });
+
+  document.getElementById('node-4-frac').addEventListener('input', (e) => {
+    graphState.fractality = parseInt(e.target.value, 10);
+    document.getElementById('node-4-frac-val').textContent = graphState.fractality;
+  });
+
+  // 9. Execute Pipeline Button ("⚡ Ejecutar Nodos")
+  const btnRun = document.getElementById('btn-run-pipeline');
+  btnRun.addEventListener('click', () => {
+    if (tokens < 5) {
       alert('Sin tokens suficientes.');
       return;
     }
 
-    // Deduct tokens
-    state.tokens -= 5;
-    tokenCountEl.textContent = state.tokens.toLocaleString();
+    tokens -= 5;
+    tokenValEl.textContent = tokens.toLocaleString();
 
-    // Show Loader
-    loader.style.display = 'flex';
+    // Animate cables with pulse wave
+    const cables = svgLayer.querySelectorAll('.wire-cable');
+    cables.forEach(c => c.classList.add('pulse-anim'));
+
+    btnRun.innerHTML = `
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+      <span>Calculando Nodos...</span>
+    `;
 
     setTimeout(() => {
-      loader.style.display = 'none';
-      renderAll();
-
-      // Add to History
-      const histItem = {
-        id: Date.now(),
-        mode: state.mode.toUpperCase(),
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        scale: state.scaleFactor,
-        creativity: state.creativity,
-        prompt: promptInput.value,
-        thumbUrl: canvasMag.toDataURL()
-      };
-      state.history.unshift(histItem);
-      renderHistory();
+      cables.forEach(c => c.classList.remove('pulse-anim'));
+      btnRun.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <span>Ejecutar Nodos (⚡ 5)</span>
+      `;
+      renderNode5Viewers();
       updateSplitPosition(40);
+      alert('Pipeline de nodos ejecutado con éxito. El resultado 8K se ha sintetizado en el nodo de salida.');
     }, 1200);
   });
 
-  function renderHistory() {
-    historyList.innerHTML = '';
-    document.getElementById('history-count').textContent = `${state.history.length} items`;
+  // 10. Node Palette Dialog
+  const palette = document.getElementById('node-palette');
+  document.getElementById('btn-add-node').addEventListener('click', () => {
+    palette.style.display = palette.style.display === 'none' ? 'block' : 'none';
+  });
+  document.getElementById('btn-close-palette').addEventListener('click', () => {
+    palette.style.display = 'none';
+  });
 
-    state.history.forEach((item, index) => {
-      const card = document.createElement('div');
-      card.className = `history-card ${index === 0 ? 'active' : ''}`;
-      card.innerHTML = `
-        <img class="history-thumb" src="${item.thumbUrl}" alt="Generation">
-        <div class="history-info">
-          <div class="history-row">
-            <span class="history-mode">${item.mode} (${item.scale})</span>
-            <span class="history-time">${item.time}</span>
-          </div>
-          <div class="history-prompt">${item.prompt}</div>
-        </div>
-      `;
-      card.addEventListener('click', () => {
-        document.querySelectorAll('.history-card').forEach(c => c.classList.remove('active'));
-        card.classList.add('active');
-        promptInput.value = item.prompt;
-      });
-      historyList.appendChild(card);
+  // Fullscreen Modal Viewer
+  const modal = document.getElementById('fullscreen-dialog');
+  const btnFullscreen = document.getElementById('btn-open-fullscreen');
+  const btnCloseModal = document.getElementById('btn-close-modal');
+
+  btnFullscreen.addEventListener('click', () => {
+    modal.showModal();
+    const mCanvasOrig = document.getElementById('modal-canvas-orig');
+    const mCanvasMag = document.getElementById('modal-canvas-mag');
+    const ctxO = mCanvasOrig.getContext('2d');
+    const ctxM = mCanvasMag.getContext('2d');
+    drawArchitecturalScene(ctxO, mCanvasOrig.width, mCanvasOrig.height, false);
+    drawArchitecturalScene(ctxM, mCanvasMag.width, mCanvasMag.height, true);
+
+    const mDivider = document.getElementById('modal-divider');
+    let mDragging = false;
+    mDivider.addEventListener('mousedown', () => { mDragging = true; });
+    window.addEventListener('mousemove', (e) => {
+      if (!mDragging) return;
+      const mBox = document.getElementById('modal-split-box');
+      const rect = mBox.getBoundingClientRect();
+      const pct = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+      mDivider.style.left = `${pct}%`;
+      mCanvasMag.style.clipPath = `polygon(${pct}% 0, 100% 0, 100% 100%, ${pct}% 100%)`;
     });
-  }
-
-  // Initial Pre-loaded History Items
-  state.history.push({
-    id: 1,
-    mode: 'UPSCALE',
-    time: '10:42 AM',
-    scale: '8x',
-    creativity: 2,
-    prompt: 'Plaza & candid architects in linen coats, board-formed concrete porosity',
-    thumbUrl: ''
+    window.addEventListener('mouseup', () => { mDragging = false; });
   });
 
-  // Toggle History Drawer
-  const toggleHistoryBtn = document.getElementById('toggle-history-btn');
-  const workspace = document.querySelector('.magnific-workspace');
-  toggleHistoryBtn.addEventListener('click', () => {
-    workspace.classList.toggle('history-collapsed');
-    toggleHistoryBtn.classList.toggle('active');
-  });
+  btnCloseModal.addEventListener('click', () => modal.close());
 
-  // Copy Prompt
-  document.getElementById('btn-copy-prompt').addEventListener('click', () => {
-    navigator.clipboard.writeText(promptInput.value).then(() => {
-      alert('Prompt copiado al portapapeles.');
-    });
-  });
-
-  // Download
-  document.getElementById('btn-download').addEventListener('click', () => {
+  // Export Full Image
+  document.getElementById('btn-export-full').addEventListener('click', () => {
     const link = document.createElement('a');
-    link.download = `magnific-archviz-${state.scaleFactor}-${Date.now()}.png`;
+    link.download = `magnific-spaces-8k-${Date.now()}.png`;
     link.href = canvasMag.toDataURL('image/png');
     link.click();
   });
 
-  // Initial render
-  renderAll();
-  state.history[0].thumbUrl = canvasMag.toDataURL();
-  renderHistory();
+  // Initial Initialization
+  renderNode1Thumb();
+  renderNode5Viewers();
+  updateWorldTransform();
+  setTimeout(drawConnections, 100);
+  window.addEventListener('resize', drawConnections);
 }

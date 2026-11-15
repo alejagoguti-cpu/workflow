@@ -3,338 +3,359 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="color-scheme" content="dark">
-  <title>Magnific AI | Architectural Archviz Studio</title>
+  <meta name="color-scheme" content="light">
+  <title>Magnific Spaces | Node-Based Archviz Canvas</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
-<body class="magnific-app">
-  <!-- Top Navigation Bar (Magnific Header) -->
-  <header class="magnific-header">
+<body class="spaces-app">
+  <!-- Top Navigation Bar -->
+  <header class="spaces-header">
     <div class="header-left">
-      <div class="magnific-logo">
+      <div class="spaces-brand">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
           <defs>
-            <linearGradient id="magGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#06b6d4"/>
-              <stop offset="50%" stop-color="#3b82f6"/>
-              <stop offset="100%" stop-color="#8b5cf6"/>
+            <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#0284c7"/>
+              <stop offset="50%" stop-color="#2563eb"/>
+              <stop offset="100%" stop-color="#7c3aed"/>
             </linearGradient>
           </defs>
-          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="url(#magGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="url(#brandGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <span class="logo-text">Magnific</span>
-        <span class="logo-tag">Archviz</span>
+        <span class="brand-title">Magnific <span class="brand-highlight">Spaces</span></span>
+        <span class="canvas-tag">Node Graph</span>
       </div>
 
-      <!-- Mode Switcher Tabs (Exact Magnific modes) -->
-      <nav class="mode-nav" role="tablist">
-        <button class="mode-tab active" role="tab" aria-selected="true" data-mode="upscale">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
-          Upscale
-        </button>
-        <button class="mode-tab" role="tab" aria-selected="false" data-mode="relight">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/></svg>
-          Relight (People)
-        </button>
-        <button class="mode-tab" role="tab" aria-selected="false" data-mode="spaces">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg>
-          Spaces
-        </button>
-        <button class="mode-tab" role="tab" aria-selected="false" data-mode="video">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          Video
-        </button>
-      </nav>
+      <div class="project-pill">
+        <span class="project-dot"></span>
+        <span class="project-name">Archviz_Upstairs_Pipeline.space</span>
+      </div>
     </div>
 
-    <div class="header-right">
-      <div class="tokens-pill" title="Tokens disponibles">
-        <span class="token-sparkle">&#9889;</span>
-        <span class="token-count" id="token-count">2,480</span>
-        <span class="token-label">tokens</span>
+    <!-- Center Toolbar: Canvas Controls -->
+    <div class="header-center">
+      <div class="canvas-tool-group">
+        <button id="btn-add-node" class="btn-tool" title="Agregar un nuevo nodo al lienzo">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>A&ntilde;adir Nodo</span>
+        </button>
+        <button id="btn-auto-arrange" class="btn-tool" title="Organizar nodos autom&aacute;ticamente">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+          <span>Organizar</span>
+        </button>
+        <button id="btn-reset-view" class="btn-tool" title="Centrar lienzo">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M3 12h3M18 12h3M12 3v3M12 18v3"/></svg>
+          <span>Centrar Vista</span>
+        </button>
       </div>
 
-      <a href="https://www.youtube.com/watch?v=gq1LIFNxjeI" target="_blank" rel="noopener noreferrer" class="nav-icon-link" title="Video Tutorial de Upstairs">
+      <div class="zoom-pill">
+        <button id="btn-zoom-out" class="zoom-btn" title="Alejar">&minus;</button>
+        <span id="zoom-level" class="zoom-text">100%</span>
+        <button id="btn-zoom-in" class="zoom-btn" title="Acercar">&plus;</button>
+      </div>
+    </div>
+
+    <!-- Right Header Actions -->
+    <div class="header-right">
+      <div class="token-pill">
+        <span class="token-icon">&#9889;</span>
+        <span id="token-val">2,480</span>
+        <span class="token-unit">tokens</span>
+      </div>
+
+      <button id="btn-run-pipeline" class="btn-run-flow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <span>Ejecutar Nodos (&#9889; 5)</span>
+      </button>
+
+      <a href="https://www.youtube.com/watch?v=gq1LIFNxjeI" target="_blank" rel="noopener noreferrer" class="btn-icon" title="Ver video de Upstairs">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
           <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
         </svg>
       </a>
-
-      <button id="toggle-history-btn" class="nav-icon-link active" title="Alternar panel de historial">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M15 3v18"/></svg>
-      </button>
     </div>
   </header>
 
-  <!-- Main Magnific 3-Column Layout -->
-  <div class="magnific-workspace">
-    <!-- LEFT PANEL: Parameters & Controls -->
-    <aside class="magnific-sidebar">
-      <div class="sidebar-scroll">
-        <!-- 1. Source Image Upload / Preset -->
-        <div class="section-card">
-          <div class="card-header">
-            <span class="card-title">Input Image</span>
-            <span class="card-tag">Archviz Render</span>
-          </div>
-
-          <div class="image-dropzone" id="dropzone">
-            <input type="file" id="image-upload" accept="image/*" class="sr-only">
-            <div class="dropzone-preview" id="dropzone-preview">
-              <div class="dropzone-empty" id="dropzone-empty">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                <p>Arrastra tu render o <span>explora</span></p>
-                <small>PNG, JPG, WEBP hasta 50MB</small>
-              </div>
-              <img id="loaded-thumb" class="loaded-thumb" alt="Thumbnail" style="display: none;">
-            </div>
-          </div>
-
-          <div class="preset-pill-row">
-            <span class="label-tiny">Presets Upstairs:</span>
-            <button class="pill-chip active" data-preset-scene="courtyard">Plaza &amp; Personas</button>
-            <button class="pill-chip" data-preset-scene="concrete">Hormigón &amp; Juntas</button>
-            <button class="pill-chip" data-preset-scene="interior">Interior Loft</button>
-          </div>
-        </div>
-
-        <!-- 2. Scale Factor Pills (Exact Magnific 2x, 4x, 8x, 16x) -->
-        <div class="section-card">
-          <div class="card-header">
-            <span class="card-title">Upscale Factor</span>
-            <span class="badge-dim" id="resolution-badge">3840 &times; 2400 (4K)</span>
-          </div>
-          <div class="scale-pills">
-            <button class="scale-btn" data-scale="2x">2x</button>
-            <button class="scale-btn active" data-scale="4x">4x</button>
-            <button class="scale-btn" data-scale="8x">8x</button>
-            <button class="scale-btn" data-scale="16x">16x</button>
-          </div>
-        </div>
-
-        <!-- 3. Engine / Optimized For Dropdown -->
-        <div class="section-card">
-          <div class="card-header">
-            <label for="engine-select" class="card-title">Optimized For (Engine)</label>
-          </div>
-          <div class="custom-select-wrap">
-            <select id="engine-select" class="magnific-select">
-              <option value="precision" selected>&#9889; Precision Archviz (Fidelidad geométrica)</option>
-              <option value="sharpy">&#9889; Sharpy (Bordes &amp; Juntas de encofrado)</option>
-              <option value="sparkle">&#9889; Sparkle (Fotografía &amp; Vegetación)</option>
-              <option value="illusio">&#9889; Illusio (Concepto artístico)</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- 4. Prompt Input Box -->
-        <div class="section-card">
-          <div class="card-header">
-            <label for="prompt-input" class="card-title">Prompt</label>
-            <button id="btn-enhance-prompt" class="btn-text-magic" title="Mejorar prompt para arquitectura">
-              <span>&#10024; Enhance</span>
-            </button>
-          </div>
-          <div class="prompt-textarea-wrap">
-            <textarea id="prompt-input" rows="3" class="magnific-textarea" placeholder="Describe los materiales, reflejos, personas o detalles arquitectónicos..."></textarea>
-          </div>
-        </div>
-
-        <!-- 5. Magnific Core Sliders (Creativity, Resemblance, Fractality) -->
-        <div class="section-card">
-          <!-- Creativity Slider -->
-          <div class="slider-block">
-            <div class="slider-head">
-              <label for="slider-creativity">Creativity (Hallucination)</label>
-              <span class="slider-badge" id="creativity-val">2</span>
-            </div>
-            <input type="range" id="slider-creativity" min="-10" max="10" value="2" step="1">
-            <div class="slider-zones-bar">
-              <div class="zone-label safe">&#9679; 1 a 3: Zona Segura (Fidelidad 100%)</div>
-              <div class="zone-label warning">&#9679; &gt;4: Alucinación</div>
-            </div>
-          </div>
-
-          <!-- Resemblance Slider -->
-          <div class="slider-block">
-            <div class="slider-head">
-              <label for="slider-resemblance">Resemblance (Parecido al Original)</label>
-              <span class="slider-badge" id="resemblance-val">8</span>
-            </div>
-            <input type="range" id="slider-resemblance" min="-10" max="10" value="8" step="1">
-            <p class="slider-micro-hint">Forzar adherencia a las líneas y cotas del render original.</p>
-          </div>
-
-          <!-- Fractality Slider -->
-          <div class="slider-block">
-            <div class="slider-head">
-              <label for="slider-fractality">Fractality (Micro-detalles)</label>
-              <span class="slider-badge" id="fractality-val">3</span>
-            </div>
-            <input type="range" id="slider-fractality" min="-10" max="10" value="3" step="1">
-            <p class="slider-micro-hint">Densidad de textura: poros de hormigón, vetas y reflejos.</p>
-          </div>
-        </div>
-
-        <!-- Mode-Specific Parameters (People in Relight / Lighting in Spaces) -->
-        <div class="section-card" id="mode-specific-card">
-          <div class="card-header">
-            <span class="card-title" id="mode-specific-title">Relight &amp; People Entourage</span>
-          </div>
-
-          <!-- People Options (Relight) -->
-          <div id="people-options-group" class="sub-group">
-            <label class="label-tiny">Tipo de Personas 3D a Integrar:</label>
-            <div class="pill-chip-container">
-              <button class="pill-chip active" data-person-style="architect">Arquitecto Casual</button>
-              <button class="pill-chip" data-person-style="couple">Pareja Caminando</button>
-              <button class="pill-chip" data-person-style="family">Grupo Familiar</button>
-            </div>
-            <div class="slider-block" style="margin-top: 0.6rem;">
-              <div class="slider-head">
-                <label for="slider-people-blend">Integración de Luz y Sombras</label>
-                <span class="slider-badge" id="people-blend-val">85%</span>
-              </div>
-              <input type="range" id="slider-people-blend" min="0" max="100" value="85">
-            </div>
-          </div>
-
-          <!-- Spaces Lighting Options -->
-          <div id="spaces-options-group" class="sub-group" style="display: none;">
-            <label class="label-tiny">Escenario de Iluminación:</label>
-            <div class="pill-chip-container">
-              <button class="pill-chip active" data-space-scene="midday">Sol Cenital</button>
-              <button class="pill-chip" data-space-scene="overcast">Nublado Suave</button>
-              <button class="pill-chip" data-space-scene="golden">Golden Hour</button>
-              <button class="pill-chip" data-space-scene="bluehour">Noche Azul</button>
-              <button class="pill-chip" data-space-scene="rainy">Lluvia &amp; Reflejos</button>
-            </div>
-          </div>
-
-          <!-- Video Options -->
-          <div id="video-options-group" class="sub-group" style="display: none;">
-            <label class="label-tiny">Parámetros de Animación:</label>
-            <div class="pill-chip-container">
-              <button class="pill-chip active" data-vid-mode="timelapse">Timelapse 24h</button>
-              <button class="pill-chip" data-vid-mode="wind">Viento en Árboles</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Action Button (Iconic Magnific CTA) -->
-      <div class="sidebar-action">
-        <button id="btn-magnify" class="btn-magnify">
-          <span class="btn-sparkle">&#9889;</span>
-          <span class="btn-text">Magnify</span>
-          <span class="btn-cost">&#9889; 5</span>
-        </button>
-      </div>
-    </aside>
-
-    <!-- CENTER VIEWPORT: The Iconic Interactive Split Canvas -->
-    <main class="magnific-viewport">
-      <!-- Floating Top Tool Pills -->
-      <div class="viewport-floating-nav">
-        <div class="view-mode-toggle">
-          <button class="view-btn active" id="btn-view-split" title="Deslizador Split Antes/Después">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="2" x2="12" y2="22"/><rect width="18" height="18" x="3" y="3" rx="2"/></svg>
-            Split Slider
-          </button>
-          <button class="view-btn" id="btn-view-lens" title="Lente de Aumento 4X">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            Lente 4X
-          </button>
-          <button class="view-btn" id="btn-view-sidebyside" title="Lado a Lado">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="8" height="18" x="3" y="3" rx="1"/><rect width="8" height="18" x="13" y="3" rx="1"/></svg>
-            Side by Side
-          </button>
-        </div>
-
-        <div class="zoom-controls">
-          <button class="zoom-btn" id="zoom-fit">Fit</button>
-          <button class="zoom-btn active" id="zoom-100">100%</button>
-          <button class="zoom-btn" id="zoom-200">200%</button>
-        </div>
-
-        <div class="viewport-export-group">
-          <button id="btn-copy-prompt" class="btn-icon-subtle" title="Copiar Prompt Completo">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-          </button>
-          <button id="btn-download" class="btn-download-pill">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download
-          </button>
-        </div>
-      </div>
-
-      <!-- Main Stage -->
-      <div class="viewport-stage" id="viewport-stage">
-        <div class="split-viewport-canvas" id="split-canvas-wrapper">
-          <!-- Canvas Base (Raw / Original) -->
-          <canvas id="canvas-original" width="1280" height="800"></canvas>
-          <!-- Canvas Overlay (Magnified 8K / AI Enhanced) -->
-          <canvas id="canvas-magnified" width="1280" height="800"></canvas>
-
-          <!-- Interactive Vertical Split Divider -->
-          <div class="magnific-divider" id="split-divider">
-            <div class="divider-line"></div>
-            <div class="divider-knob">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
-          </div>
-
-          <!-- Magnifier Lens -->
-          <div class="magnific-lens" id="magnific-lens">
-            <div class="lens-crosshair-h"></div>
-            <div class="lens-crosshair-v"></div>
-            <span class="lens-badge">8K ULTRA</span>
-          </div>
-
-          <!-- Pill tags in viewport -->
-          <div class="viewport-tags">
-            <span class="tag-pill tag-original">Original (Clay / Shaded)</span>
-            <span class="tag-pill tag-magnified">Magnific Precision (8K)</span>
-          </div>
-
-          <!-- Loading state overlay -->
-          <div class="magnific-loader" id="magnific-loader">
-            <div class="loader-spinner"></div>
-            <p>Upscaling with Precision Archviz Engine...</p>
-            <span class="loader-sub">Generating board-formed pores, glass fresnel &amp; linen folds</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Floating Bottom Parameter Bar -->
-      <div class="viewport-bottom-bar">
-        <div class="status-meta">
-          <span class="meta-item"><strong>Engine:</strong> <span id="meta-engine">Precision Archviz</span></span>
-          <span class="meta-item"><strong>Creativity:</strong> <span id="meta-creativity">2 (Fidelidad 100%)</span></span>
-          <span class="meta-item"><strong>Resemblance:</strong> <span id="meta-resemblance">8</span></span>
-          <span class="meta-item"><strong>Scale:</strong> <span id="meta-scale">4x (3840 &times; 2400)</span></span>
-        </div>
-        <div class="status-hint">
-          <span>Arrastra el personaje en el lienzo para reposicionarlo</span>
-        </div>
-      </div>
-    </main>
-
-    <!-- RIGHT PANEL: Generations & History Drawer -->
-    <aside class="magnific-history" id="magnific-history">
-      <div class="history-header">
-        <span class="history-title">Generations</span>
-        <span class="badge-dim" id="history-count">3 items</span>
-      </div>
-
-      <div class="history-list" id="history-list">
-        <!-- History items rendered dynamically -->
-      </div>
-    </aside>
+  <!-- Node Palette Drawer (Hidden by default, opened by Add Node) -->
+  <div id="node-palette" class="node-palette" style="display: none;">
+    <div class="palette-header">
+      <span>A&ntilde;adir Nodo a Spaces</span>
+      <button id="btn-close-palette">&times;</button>
+    </div>
+    <div class="palette-list">
+      <button class="palette-item" data-create-node="input">
+        <strong>Input Render</strong>
+        <small>Carga un render base 3D o captura</small>
+      </button>
+      <button class="palette-item" data-create-node="relight">
+        <strong>Relight &amp; Solar</strong>
+        <small>Escenarios de luz y sol 3000K</small>
+      </button>
+      <button class="palette-item" data-create-node="people">
+        <strong>People &amp; Scale</strong>
+        <small>Integraci&oacute;n de escala humana</small>
+      </button>
+      <button class="palette-item" data-create-node="furniture">
+        <strong>Furniture Swap</strong>
+        <small>Prueba de mobiliario interior</small>
+      </button>
+      <button class="palette-item" data-create-node="upscaler">
+        <strong>Magnific 8K Upscaler</strong>
+        <small>Motor de precisi&oacute;n con slider de creatividad</small>
+      </button>
+      <button class="palette-item" data-create-node="output">
+        <strong>Split Output Viewer</strong>
+        <small>Comparador deslizante antes / despu&eacute;s</small>
+      </button>
+    </div>
   </div>
+
+  <!-- Infinite White Canvas Workspace -->
+  <main class="infinite-canvas-viewport" id="canvas-viewport">
+    <div class="canvas-world" id="canvas-world">
+      <!-- SVG Connecting Cables Layer -->
+      <svg class="connections-layer" id="connections-layer">
+        <defs>
+          <linearGradient id="cableGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#3b82f6"/>
+            <stop offset="100%" stop-color="#8b5cf6"/>
+          </linearGradient>
+          <filter id="cableGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#3b82f6" flood-opacity="0.3"/>
+          </filter>
+        </defs>
+        <!-- Connected Bezier Cables will be drawn here -->
+      </svg>
+
+      <!-- Nodes Container (HTML Cards positioned in 2D space) -->
+      <div class="nodes-container" id="nodes-container">
+        
+        <!-- NODE 1: Input Render -->
+        <div class="space-node node-input" id="node-1" style="left: 80px; top: 180px;" data-node-id="1">
+          <div class="node-header">
+            <div class="node-title-group">
+              <span class="node-icon icon-blue">&#9638;</span>
+              <span class="node-title">Input Render 3D</span>
+            </div>
+            <span class="node-tag">1920&times;1080</span>
+          </div>
+          <div class="node-body">
+            <div class="node-thumb-wrapper">
+              <canvas id="node-1-thumb" class="node-canvas-thumb" width="280" height="175"></canvas>
+              <div class="thumb-badge">Clay / Raw</div>
+            </div>
+            <div class="node-control-row">
+              <label class="control-micro-label">Preset de Arquitectura:</label>
+              <select id="node-1-scene-select" class="node-select">
+                <option value="courtyard">Plaza &amp; Hormig&oacute;n Visto</option>
+                <option value="atrium">Atrio Interior Vidrio</option>
+                <option value="facade">Fachada Brutalista</option>
+              </select>
+            </div>
+          </div>
+          <div class="node-ports">
+            <div class="port port-out" data-port-id="node-1-out" title="Salida de Imagen">
+              <span class="port-label">Image Out</span>
+              <div class="port-dot port-dot-blue"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NODE 2: Relight & Lighting Scenarios -->
+        <div class="space-node node-relight" id="node-2" style="left: 480px; top: 80px;" data-node-id="2">
+          <div class="node-header">
+            <div class="node-title-group">
+              <span class="node-icon icon-amber">&#9788;</span>
+              <span class="node-title">Lighting Scenarios</span>
+            </div>
+            <span class="node-tag tag-amber">Spaces Relight</span>
+          </div>
+          <div class="node-body">
+            <div class="node-control-row">
+              <label class="control-micro-label">Escenario Solar:</label>
+              <div class="chip-grid">
+                <button class="node-chip active" data-light="midday">Sol Cenital</button>
+                <button class="node-chip" data-light="golden">Golden Hour</button>
+                <button class="node-chip" data-light="bluehour">Noche Azul</button>
+                <button class="node-chip" data-light="rainy">Lluvia</button>
+              </div>
+            </div>
+            <div class="node-control-row">
+              <div class="slider-inline-head">
+                <label>Intensidad de Sombras:</label>
+                <span id="node-2-shadow-val" class="slider-mono-val">75%</span>
+              </div>
+              <input type="range" id="node-2-shadow" min="10" max="100" value="75">
+            </div>
+          </div>
+          <div class="node-ports">
+            <div class="port port-in" data-port-id="node-2-in">
+              <div class="port-dot port-dot-blue"></div>
+              <span class="port-label">Image In</span>
+            </div>
+            <div class="port port-out" data-port-id="node-2-out">
+              <span class="port-label">Relit Out</span>
+              <div class="port-dot port-dot-amber"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NODE 3: Character & Entourage Placement -->
+        <div class="space-node node-people" id="node-3" style="left: 480px; top: 380px;" data-node-id="3">
+          <div class="node-header">
+            <div class="node-title-group">
+              <span class="node-icon icon-emerald">&#9829;</span>
+              <span class="node-title">People (Scale Figures)</span>
+            </div>
+            <span class="node-tag tag-emerald">Entourage</span>
+          </div>
+          <div class="node-body">
+            <p class="node-tip">Inserta personajes con proporci&oacute;n y luz ambiental integrada sin cortes artificiales.</p>
+            <div class="node-control-row">
+              <label class="control-micro-label">Estilo de Figura Humana:</label>
+              <div class="chip-grid">
+                <button class="node-chip active" data-char="architect">Arquitecto Casual</button>
+                <button class="node-chip" data-char="couple">Pareja</button>
+                <button class="node-chip" data-char="group">Grupo</button>
+              </div>
+            </div>
+            <div class="node-control-row">
+              <div class="slider-inline-head">
+                <label>Fusi&oacute;n de Luz Ambiental:</label>
+                <span id="node-3-blend-val" class="slider-mono-val">85%</span>
+              </div>
+              <input type="range" id="node-3-blend" min="20" max="100" value="85">
+            </div>
+          </div>
+          <div class="node-ports">
+            <div class="port port-in" data-port-id="node-3-in">
+              <div class="port-dot port-dot-blue"></div>
+              <span class="port-label">Image In</span>
+            </div>
+            <div class="port port-out" data-port-id="node-3-out">
+              <span class="port-label">Composited</span>
+              <div class="port-dot port-dot-emerald"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NODE 4: Magnific Precision Upscaler 8K -->
+        <div class="space-node node-upscaler" id="node-4" style="left: 920px; top: 160px;" data-node-id="4">
+          <div class="node-header">
+            <div class="node-title-group">
+              <span class="node-icon icon-purple">&#9889;</span>
+              <span class="node-title">Magnific 8K Precision</span>
+            </div>
+            <span class="node-tag tag-purple">Core Engine</span>
+          </div>
+          <div class="node-body">
+            <div class="node-control-row">
+              <label class="control-micro-label">Engine:</label>
+              <select id="node-4-engine" class="node-select">
+                <option value="precision">&#9889; Precision Archviz (Fidelidad 100%)</option>
+                <option value="sharpy">&#9889; Sharpy (Aristas &amp; Juntas)</option>
+                <option value="sparkle">&#9889; Sparkle (Fotograf&iacute;a natural)</option>
+              </select>
+            </div>
+            <div class="node-control-row">
+              <div class="slider-inline-head">
+                <label>Creativity (Hallucination):</label>
+                <span id="node-4-creat-val" class="badge-safe">Nivel 2 (Seguro)</span>
+              </div>
+              <input type="range" id="node-4-creat" min="1" max="10" value="2">
+              <span class="safe-zone-text">&#9679; 1 a 3: Respeta 100% columnas y l&iacute;neas maestras</span>
+            </div>
+            <div class="node-control-row">
+              <div class="slider-inline-head">
+                <label>Resemblance (Parecido):</label>
+                <span id="node-4-resem-val" class="slider-mono-val">8</span>
+              </div>
+              <input type="range" id="node-4-resem" min="1" max="10" value="8">
+            </div>
+            <div class="node-control-row">
+              <div class="slider-inline-head">
+                <label>Fractality (Micro-bump):</label>
+                <span id="node-4-frac-val" class="slider-mono-val">3</span>
+              </div>
+              <input type="range" id="node-4-frac" min="0" max="10" value="3">
+            </div>
+          </div>
+          <div class="node-ports">
+            <div class="port port-in" data-port-id="node-4-in">
+              <div class="port-dot port-dot-amber"></div>
+              <span class="port-label">Source In</span>
+            </div>
+            <div class="port port-out" data-port-id="node-4-out">
+              <span class="port-label">8K Output</span>
+              <div class="port-dot port-dot-purple"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NODE 5: Split Output Viewer (Before / After) -->
+        <div class="space-node node-output" id="node-5" style="left: 1360px; top: 120px;" data-node-id="5">
+          <div class="node-header">
+            <div class="node-title-group">
+              <span class="node-icon icon-cyan">&#9670;</span>
+              <span class="node-title">Split Output (Before / After)</span>
+            </div>
+            <span class="node-tag tag-cyan">Compare</span>
+          </div>
+          <div class="node-body">
+            <!-- Interactive Split Canvas embedded in the Output Node -->
+            <div class="split-node-viewport" id="node-5-split-box">
+              <canvas id="node-5-canvas-orig" width="460" height="290"></canvas>
+              <canvas id="node-5-canvas-mag" width="460" height="290"></canvas>
+              <div class="node-split-divider" id="node-5-divider">
+                <div class="node-divider-handle">&#171;&#187;</div>
+              </div>
+              <div class="node-split-labels">
+                <span class="label-tiny-tag">3D Raw</span>
+                <span class="label-tiny-tag tag-cyan">8K Magnific</span>
+              </div>
+            </div>
+            <div class="node-actions-row">
+              <button id="btn-export-full" class="btn-node-action btn-primary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Exportar Render 8K
+              </button>
+              <button id="btn-open-fullscreen" class="btn-node-action btn-secondary" title="Abrir en pantalla completa">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="node-ports">
+            <div class="port port-in" data-port-id="node-5-in">
+              <div class="port-dot port-dot-purple"></div>
+              <span class="port-label">8K In</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Fullscreen Modal Viewer -->
+  <dialog id="fullscreen-dialog" class="fullscreen-modal">
+    <div class="modal-header">
+      <h3>Comparador Pantalla Completa (Magnific 8K Archviz)</h3>
+      <button id="btn-close-modal" class="modal-close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-split-box" id="modal-split-box">
+        <canvas id="modal-canvas-orig" width="1280" height="800"></canvas>
+        <canvas id="modal-canvas-mag" width="1280" height="800"></canvas>
+        <div class="node-split-divider" id="modal-divider">
+          <div class="node-divider-handle">&#171;&#187;</div>
+        </div>
+      </div>
+    </div>
+  </dialog>
 
   <script src="app.js"></script>
 </body>

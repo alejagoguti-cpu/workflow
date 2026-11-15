@@ -3,504 +3,338 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="color-scheme" content="light dark">
-  <title>ArchFlow AI Studio | Workflows de IA para Arquitectura</title>
+  <meta name="color-scheme" content="dark">
+  <title>Magnific AI | Architectural Archviz Studio</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
-<body>
-  <!-- Header / Navigation -->
-  <header class="app-header">
-    <div class="header-brand">
-      <div class="brand-logo">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 21h18"/>
-          <path d="M5 21V7l8-4v18"/>
-          <path d="M19 21V11l-6-4"/>
-          <path d="M9 9h1"/>
-          <path d="M9 13h1"/>
-          <path d="M9 17h1"/>
+<body class="magnific-app">
+  <!-- Top Navigation Bar (Magnific Header) -->
+  <header class="magnific-header">
+    <div class="header-left">
+      <div class="magnific-logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <defs>
+            <linearGradient id="magGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#06b6d4"/>
+              <stop offset="50%" stop-color="#3b82f6"/>
+              <stop offset="100%" stop-color="#8b5cf6"/>
+            </linearGradient>
+          </defs>
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="url(#magGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
+        <span class="logo-text">Magnific</span>
+        <span class="logo-tag">Archviz</span>
       </div>
-      <div>
-        <h1 class="brand-title">ArchFlow <span class="badge-ai">AI Studio</span></h1>
-        <p class="brand-subtitle">Architectural AI Workflows inspired by Show It Better</p>
-      </div>
+
+      <!-- Mode Switcher Tabs (Exact Magnific modes) -->
+      <nav class="mode-nav" role="tablist">
+        <button class="mode-tab active" role="tab" aria-selected="true" data-mode="upscale">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+          Upscale
+        </button>
+        <button class="mode-tab" role="tab" aria-selected="false" data-mode="relight">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/></svg>
+          Relight (People)
+        </button>
+        <button class="mode-tab" role="tab" aria-selected="false" data-mode="spaces">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg>
+          Spaces
+        </button>
+        <button class="mode-tab" role="tab" aria-selected="false" data-mode="video">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Video
+        </button>
+      </nav>
     </div>
 
-    <!-- Workflow Tabs -->
-    <nav class="workflow-tabs" role="tablist" aria-label="Flujos de trabajo de arquitectura">
-      <button class="tab-btn active" role="tab" aria-selected="true" id="tab-btn-1" aria-controls="workflow-1" data-target="workflow-1">
-        <span class="tab-num">01</span>
-        <span class="tab-label">Google Earth &rarr; Dron</span>
-      </button>
-      <button class="tab-btn" role="tab" aria-selected="false" id="tab-btn-2" aria-controls="workflow-2" data-target="workflow-2">
-        <span class="tab-num">02</span>
-        <span class="tab-label">Timelapse D&iacute;a / Noche</span>
-      </button>
-      <button class="tab-btn" role="tab" aria-selected="false" id="tab-btn-3" aria-controls="workflow-3" data-target="workflow-3">
-        <span class="tab-num">03</span>
-        <span class="tab-label">Micro-Enhance Texturas</span>
-      </button>
-    </nav>
+    <div class="header-right">
+      <div class="tokens-pill" title="Tokens disponibles">
+        <span class="token-sparkle">&#9889;</span>
+        <span class="token-count" id="token-count">2,480</span>
+        <span class="token-label">tokens</span>
+      </div>
 
-    <div class="header-actions">
-      <a href="https://www.youtube.com/watch?v=lEfSoR5JCaQ" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" title="Ver video de referencia en YouTube">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+      <a href="https://www.youtube.com/watch?v=gq1LIFNxjeI" target="_blank" rel="noopener noreferrer" class="nav-icon-link" title="Video Tutorial de Upstairs">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
           <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
         </svg>
-        <span>Video Original</span>
       </a>
+
+      <button id="toggle-history-btn" class="nav-icon-link active" title="Alternar panel de historial">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M15 3v18"/></svg>
+      </button>
     </div>
   </header>
 
-  <main class="app-main">
-    <!-- ========================================== -->
-    <!-- WORKFLOW 1: Google Earth to Drone Shot      -->
-    <!-- ========================================== -->
-    <section id="workflow-1" class="workflow-section active" role="tabpanel" aria-labelledby="tab-btn-1">
-      <div class="workflow-header-banner">
-        <div class="banner-badge">Workflow 01</div>
-        <h2>Foto-montaje Contextual: Google Earth &rarr; Toma A&eacute;rea de Dron</h2>
-        <p>Inserta tu volumetr&iacute;a 3D sobre una captura de Google Earth 3D y genera una toma a&eacute;rea fotorrealista manteniendo la geometr&iacute;a y mejorando el entorno.</p>
-      </div>
+  <!-- Main Magnific 3-Column Layout -->
+  <div class="magnific-workspace">
+    <!-- LEFT PANEL: Parameters & Controls -->
+    <aside class="magnific-sidebar">
+      <div class="sidebar-scroll">
+        <!-- 1. Source Image Upload / Preset -->
+        <div class="section-card">
+          <div class="card-header">
+            <span class="card-title">Input Image</span>
+            <span class="card-tag">Archviz Render</span>
+          </div>
 
-      <div class="studio-grid">
-        <!-- Sidebar Controls -->
-        <aside class="control-panel">
-          <div class="panel-section">
-            <h3 class="panel-title">1. Capa de Contexto (Google Earth)</h3>
-            <div class="preset-group">
-              <label class="control-label">Preajustes r&aacute;pidos:</label>
-              <div class="chip-container">
-                <button class="chip active" data-wf1-bg="coastal">Acantilado Costero</button>
-                <button class="chip" data-wf1-bg="urban">Parque Urbano</button>
-                <button class="chip" data-wf1-bg="forest">Bosque de Monta&ntilde;a</button>
+          <div class="image-dropzone" id="dropzone">
+            <input type="file" id="image-upload" accept="image/*" class="sr-only">
+            <div class="dropzone-preview" id="dropzone-preview">
+              <div class="dropzone-empty" id="dropzone-empty">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <p>Arrastra tu render o <span>explora</span></p>
+                <small>PNG, JPG, WEBP hasta 50MB</small>
               </div>
-            </div>
-            <div class="dropzone-box">
-              <input type="file" id="wf1-bg-upload" accept="image/*" class="sr-only">
-              <label for="wf1-bg-upload" class="dropzone-label">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                <span>Subir captura Google Earth</span>
-              </label>
+              <img id="loaded-thumb" class="loaded-thumb" alt="Thumbnail" style="display: none;">
             </div>
           </div>
 
-          <div class="panel-section">
-            <h3 class="panel-title">2. Capa Modelo 3D (Masa / Clay)</h3>
-            <div class="preset-group">
-              <label class="control-label">Volumetr&iacute;a 3D:</label>
-              <div class="chip-container">
-                <button class="chip active" data-wf1-mass="pavilion">Pabell&oacute;n Curvo Vidrio</button>
-                <button class="chip" data-wf1-mass="brutalist">Bloque Concreto Brutalista</button>
-                <button class="chip" data-wf1-mass="villa">Residencia Madera Escalonada</button>
-              </div>
-            </div>
-            <div class="dropzone-box">
-              <input type="file" id="wf1-mass-upload" accept="image/*" class="sr-only">
-              <label for="wf1-mass-upload" class="dropzone-label">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                <span>Subir masa 3D (.png fondo transparente)</span>
-              </label>
-            </div>
-          </div>
-
-          <div class="panel-section">
-            <h3 class="panel-title">3. Ajustes de Inserci&oacute;n y Posici&oacute;n</h3>
-            
-            <div class="slider-control">
-              <div class="slider-header">
-                <label for="wf1-scale">Escala del edificio</label>
-                <span id="wf1-scale-val" class="slider-val">100%</span>
-              </div>
-              <input type="range" id="wf1-scale" min="50" max="160" value="100">
-            </div>
-
-            <div class="slider-control">
-              <div class="slider-header">
-                <label for="wf1-opacity">Opacidad de masa</label>
-                <span id="wf1-opacity-val" class="slider-val">100%</span>
-              </div>
-              <input type="range" id="wf1-opacity" min="20" max="100" value="100">
-            </div>
-
-            <div class="slider-control">
-              <div class="slider-header">
-                <label for="wf1-shadow">Sombra de contacto</label>
-                <span id="wf1-shadow-val" class="slider-val">45%</span>
-              </div>
-              <input type="range" id="wf1-shadow" min="0" max="100" value="45">
-            </div>
-
-            <div class="slider-control">
-              <div class="slider-header">
-                <label for="wf1-haze">Integraci&oacute;n atmosf&eacute;rica (Neblina)</label>
-                <span id="wf1-haze-val" class="slider-val">20%</span>
-              </div>
-              <input type="range" id="wf1-haze" min="0" max="60" value="20">
-            </div>
-          </div>
-
-          <div class="panel-actions">
-            <button id="wf1-btn-synthesize" class="btn btn-primary btn-block">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
-              Sintetizar Toma A&eacute;rea Fotorrealista
-            </button>
-            <button id="wf1-btn-reset" class="btn btn-ghost btn-block">Restablecer Posici&oacute;n</button>
-          </div>
-        </aside>
-
-        <!-- Canvas Viewport -->
-        <div class="canvas-viewport-wrapper">
-          <div class="viewport-toolbar">
-            <div class="toolbar-info">
-              <span class="status-indicator live"></span>
-              <span id="wf1-status-text">Modo Composici&oacute;n Interactiva (Arrastra el edificio para posicionarlo)</span>
-            </div>
-            <div class="toolbar-tools">
-              <button id="wf1-toggle-split" class="btn btn-icon" title="Alternar Vista Previa / Original">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
-              </button>
-              <button id="wf1-btn-download" class="btn btn-secondary btn-sm">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Exportar Imagen
-              </button>
-            </div>
-          </div>
-
-          <div class="canvas-container" id="wf1-canvas-container">
-            <canvas id="wf1-canvas" width="1024" height="640"></canvas>
-            <div id="wf1-hint" class="canvas-overlay-hint">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 9l-3 3 3 3"/><path d="M9 5l3-3 3 3"/><path d="M19 9l3 3-3 3"/><path d="M9 19l3 3 3-3"/><path d="M2 12h20"/><path d="M12 2v20"/></svg>
-              Arrastra para mover la volumetr&iacute;a sobre el terreno
-            </div>
-          </div>
-
-          <!-- Generated Prompt Box -->
-          <div class="prompt-card">
-            <div class="prompt-header">
-              <div class="prompt-title">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                <span>Prompt de Reconstrucci&oacute;n Generado (Midjourney / DALL-E / Magnific)</span>
-              </div>
-              <button class="btn btn-ghost btn-sm copy-btn" data-copy-target="wf1-prompt-text">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                Copiar Prompt
-              </button>
-            </div>
-            <p id="wf1-prompt-text" class="prompt-text">
-              High-angle architectural drone photography of a contemporary glass and timber pavilion seamlessly integrated into the natural cliffside topography. Crisp daylight, 4k ultra-realistic vegetation, photorealistic asphalt pathways, volumetric sun haze, Hasselblad 24mm lens aerial perspective, realistic environmental reflection on double-glazed facades --ar 16:9 --style raw --v 6.1
-            </p>
+          <div class="preset-pill-row">
+            <span class="label-tiny">Presets Upstairs:</span>
+            <button class="pill-chip active" data-preset-scene="courtyard">Plaza &amp; Personas</button>
+            <button class="pill-chip" data-preset-scene="concrete">Hormigón &amp; Juntas</button>
+            <button class="pill-chip" data-preset-scene="interior">Interior Loft</button>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- ========================================== -->
-    <!-- WORKFLOW 2: Day-to-Night Architectural     -->
-    <!-- ========================================== -->
-    <section id="workflow-2" class="workflow-section" role="tabpanel" aria-labelledby="tab-btn-2">
-      <div class="workflow-header-banner">
-        <div class="banner-badge">Workflow 02</div>
-        <h2>Timelapse D&iacute;a &rarr; Noche (Interpolaci&oacute;n Lum&iacute;nica y Atm&oacute;sfera)</h2>
-        <p>Prepara fotogramas clave id&eacute;nticos y visualiza la transici&oacute;n continua de iluminaci&oacute;n natural a luces artificiales c&aacute;lidas de noche.</p>
-      </div>
-
-      <div class="studio-grid">
-        <aside class="control-panel">
-          <div class="panel-section">
-            <h3 class="panel-title">1. Proyecto Arquitect&oacute;nico</h3>
-            <div class="chip-container">
-              <button class="chip active" data-wf2-scene="museum">Museo de Arte Moderno</button>
-              <button class="chip" data-wf2-scene="residence">Casa Bosque Minimalista</button>
-              <button class="chip" data-wf2-scene="tower">Torre Residencial Urbana</button>
-            </div>
+        <!-- 2. Scale Factor Pills (Exact Magnific 2x, 4x, 8x, 16x) -->
+        <div class="section-card">
+          <div class="card-header">
+            <span class="card-title">Upscale Factor</span>
+            <span class="badge-dim" id="resolution-badge">3840 &times; 2400 (4K)</span>
           </div>
-
-          <div class="panel-section">
-            <h3 class="panel-title">2. Cargar Fotogramas Personalizados</h3>
-            <div class="upload-dual-grid">
-              <div class="dropzone-box">
-                <input type="file" id="wf2-upload-day" accept="image/*" class="sr-only">
-                <label for="wf2-upload-day" class="dropzone-label">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
-                  <span>Frame A: D&iacute;a</span>
-                </label>
-              </div>
-              <div class="dropzone-box">
-                <input type="file" id="wf2-upload-night" accept="image/*" class="sr-only">
-                <label for="wf2-upload-night" class="dropzone-label">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-                  <span>Frame B: Noche</span>
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <div class="panel-section">
-            <h3 class="panel-title">3. Modo de Visualizaci&oacute;n</h3>
-            <div class="view-mode-buttons">
-              <button id="wf2-mode-split" class="btn btn-secondary btn-sm active">Comparador Split (Cortina)</button>
-              <button id="wf2-mode-timelapse" class="btn btn-secondary btn-sm">Animaci&oacute;n Timelapse</button>
-            </div>
-          </div>
-
-          <div class="panel-section">
-            <h3 class="panel-title">4. Control del Ciclo Solar (24 Horas)</h3>
-            <div class="slider-control">
-              <div class="slider-header">
-                <label for="wf2-time-slider">Hora del D&iacute;a simulada:</label>
-                <span id="wf2-time-label" class="time-badge">14:00 (Mediod&iacute;a)</span>
-              </div>
-              <input type="range" id="wf2-time-slider" min="0" max="100" value="30">
-            </div>
-
-            <div class="timelapse-playback-controls">
-              <button id="wf2-play-btn" class="btn btn-primary btn-block">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                <span>Reproducir Timelapse</span>
-              </button>
-            </div>
-          </div>
-
-          <div class="panel-section">
-            <h3 class="panel-title">5. Par&aacute;metros de Video (Runway / Kling / Luma)</h3>
-            <ul class="spec-list">
-              <li><strong>Camera Motion:</strong> <code>0 (Locked Tri-pod)</code></li>
-              <li><strong>Interpolation:</strong> First Frame + Last Frame</li>
-              <li><strong>Frame Rate:</strong> 24 fps cinematic</li>
-              <li><strong>Duration:</strong> 5.0 segundos</li>
-            </ul>
-          </div>
-        </aside>
-
-        <!-- Viewport -->
-        <div class="canvas-viewport-wrapper">
-          <div class="viewport-toolbar">
-            <div class="toolbar-info">
-              <span id="wf2-lighting-state" class="badge-lighting day">Luz Solar Directa</span>
-              <span class="lighting-detail">Geometr&iacute;a est&aacute;tica de c&aacute;mara fija</span>
-            </div>
-            <div class="toolbar-tools">
-              <button id="wf2-download-btn" class="btn btn-secondary btn-sm">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Exportar Fotograma
-              </button>
-            </div>
-          </div>
-
-          <!-- Split / Timelapse Viewport -->
-          <div class="split-viewport" id="wf2-split-container">
-            <div class="split-layer day-layer" id="wf2-day-layer"></div>
-            <div class="split-layer night-layer" id="wf2-night-layer"></div>
-            <div class="split-divider" id="wf2-divider">
-              <div class="divider-handle">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-              </div>
-            </div>
-            <div class="split-labels">
-              <span class="label-tag tag-day">D&iacute;a (Frame A)</span>
-              <span class="label-tag tag-night">Noche (Frame B)</span>
-            </div>
-          </div>
-
-          <!-- Prompt Box -->
-          <div class="prompt-card">
-            <div class="prompt-header">
-              <div class="prompt-title">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.934a.5.5 0 0 0-.777-.416L16 11"/><rect width="14" height="12" x="2" y="6" rx="2"/></svg>
-                <span>Configuraci&oacute;n de Prompt para Runway Gen-3 / Luma Dream Machine</span>
-              </div>
-              <button class="btn btn-ghost btn-sm copy-btn" data-copy-target="wf2-prompt-text">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                Copiar
-              </button>
-            </div>
-            <p id="wf2-prompt-text" class="prompt-text">
-              Static fixed-tripod architectural timelapse. Seamless transition from bright afternoon sun to twilight and deep blue night. Interior warm 3000K architectural lights turn on gradually through floor-to-ceiling glass facades. Exterior landscape accent lighting illuminates concrete walls and garden pathways. Zero camera movement, perfectly stable geometry.
-            </p>
+          <div class="scale-pills">
+            <button class="scale-btn" data-scale="2x">2x</button>
+            <button class="scale-btn active" data-scale="4x">4x</button>
+            <button class="scale-btn" data-scale="8x">8x</button>
+            <button class="scale-btn" data-scale="16x">16x</button>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- ========================================== -->
-    <!-- WORKFLOW 3: Micro-Enhancement / Textures   -->
-    <!-- ========================================== -->
-    <section id="workflow-3" class="workflow-section" role="tabpanel" aria-labelledby="tab-btn-3">
-      <div class="workflow-header-banner">
-        <div class="banner-badge">Workflow 03</div>
-        <h2>Micro-Enhance: Refinamiento de Texturas e Inpainting Guiado</h2>
-        <p>Eleva la definici&oacute;n de renders r&aacute;pidos (juntas de hormig&oacute;n, reflejos de vidrio, vetas de madera) controlando el slider de alucinaci&oacute;n.</p>
-      </div>
-
-      <div class="studio-grid">
-        <aside class="control-panel">
-          <div class="panel-section">
-            <h3 class="panel-title">1. Render Base a Escalar</h3>
-            <div class="chip-container">
-              <button class="chip active" data-wf3-preset="concrete">Muro Hormig&oacute;n Visto</button>
-              <button class="chip" data-wf3-preset="facade">Fachada Vidrio &amp; Acero</button>
-              <button class="chip" data-wf3-preset="interior">Interior Loft Madera</button>
-            </div>
-            <div class="dropzone-box">
-              <input type="file" id="wf3-upload-render" accept="image/*" class="sr-only">
-              <label for="wf3-upload-render" class="dropzone-label">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                <span>Subir Render Base (Baja o Media Calidad)</span>
-              </label>
-            </div>
+        <!-- 3. Engine / Optimized For Dropdown -->
+        <div class="section-card">
+          <div class="card-header">
+            <label for="engine-select" class="card-title">Optimized For (Engine)</label>
           </div>
-
-          <div class="panel-section">
-            <h3 class="panel-title">2. Slider Cr&iacute;tico: Creatividad / Alucinaci&oacute;n</h3>
-            <div class="slider-control">
-              <div class="slider-header">
-                <label for="wf3-hallucination">Nivel de Alucinaci&oacute;n (Creativity):</label>
-                <span id="wf3-hallucination-val" class="badge-safe">Nivel 2 (Fidelidad 100%)</span>
-              </div>
-              <input type="range" id="wf3-hallucination" min="1" max="10" value="2">
-              <div class="slider-zones">
-                <span class="zone safe">1-3 Seguro</span>
-                <span class="zone mid">4-6 Moderado</span>
-                <span class="zone danger">7-10 Alucinaci&oacute;n</span>
-              </div>
-            </div>
-            <p id="wf3-zone-desc" class="param-hint">
-              <strong>Zona Segura (Recomendada):</strong> Preserva 100% las l&iacute;neas estructurales y medidas. S&oacute;lo mejora micro-rugosidades e imperfecciones realistas.
-            </p>
+          <div class="custom-select-wrap">
+            <select id="engine-select" class="magnific-select">
+              <option value="precision" selected>&#9889; Precision Archviz (Fidelidad geométrica)</option>
+              <option value="sharpy">&#9889; Sharpy (Bordes &amp; Juntas de encofrado)</option>
+              <option value="sparkle">&#9889; Sparkle (Fotografía &amp; Vegetación)</option>
+              <option value="illusio">&#9889; Illusio (Concepto artístico)</option>
+            </select>
           </div>
+        </div>
 
-          <div class="panel-section">
-            <h3 class="panel-title">3. Detalle de Materiales</h3>
-            <div class="slider-control">
-              <div class="slider-header">
-                <label for="wf3-sharpness">Nitidez y Micro-Bump</label>
-                <span id="wf3-sharpness-val" class="slider-val">70%</span>
-              </div>
-              <input type="range" id="wf3-sharpness" min="0" max="100" value="70">
-            </div>
-
-            <div class="slider-control">
-              <div class="slider-header">
-                <label for="wf3-reflections">Reflejos Fresnel y Especularidad</label>
-                <span id="wf3-reflections-val" class="slider-val">65%</span>
-              </div>
-              <input type="range" id="wf3-reflections" min="0" max="100" value="65">
-            </div>
-
-            <div class="slider-control">
-              <div class="slider-header">
-                <label for="wf3-imperfections">Imperfecciones Naturales (P&aacute;tina)</label>
-                <span id="wf3-imperfections-val" class="slider-val">30%</span>
-              </div>
-              <input type="range" id="wf3-imperfections" min="0" max="100" value="30">
-            </div>
-          </div>
-
-          <div class="panel-actions">
-            <button id="wf3-btn-apply" class="btn btn-primary btn-block">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/></svg>
-              Aplicar Micro-Enhancement 4K
+        <!-- 4. Prompt Input Box -->
+        <div class="section-card">
+          <div class="card-header">
+            <label for="prompt-input" class="card-title">Prompt</label>
+            <button id="btn-enhance-prompt" class="btn-text-magic" title="Mejorar prompt para arquitectura">
+              <span>&#10024; Enhance</span>
             </button>
           </div>
-        </aside>
+          <div class="prompt-textarea-wrap">
+            <textarea id="prompt-input" rows="3" class="magnific-textarea" placeholder="Describe los materiales, reflejos, personas o detalles arquitectónicos..."></textarea>
+          </div>
+        </div>
 
-        <!-- Viewport with Magnifier Lens -->
-        <div class="canvas-viewport-wrapper">
-          <div class="viewport-toolbar">
-            <div class="toolbar-info">
-              <span class="status-indicator ready"></span>
-              <span>Lente de Inspecci&oacute;n Activa: Pasa el cursor sobre la imagen para ver el zoom 2x del antes y despu&eacute;s</span>
+        <!-- 5. Magnific Core Sliders (Creativity, Resemblance, Fractality) -->
+        <div class="section-card">
+          <!-- Creativity Slider -->
+          <div class="slider-block">
+            <div class="slider-head">
+              <label for="slider-creativity">Creativity (Hallucination)</label>
+              <span class="slider-badge" id="creativity-val">2</span>
             </div>
-            <div class="toolbar-tools">
-              <button id="wf3-download-btn" class="btn btn-secondary btn-sm">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Exportar Render 4K
-              </button>
+            <input type="range" id="slider-creativity" min="-10" max="10" value="2" step="1">
+            <div class="slider-zones-bar">
+              <div class="zone-label safe">&#9679; 1 a 3: Zona Segura (Fidelidad 100%)</div>
+              <div class="zone-label warning">&#9679; &gt;4: Alucinación</div>
             </div>
           </div>
 
-          <div class="magnifier-container" id="wf3-magnifier-stage">
-            <canvas id="wf3-canvas" width="1024" height="640"></canvas>
-            <div id="wf3-lens" class="inspector-lens">
-              <div class="lens-crosshair"></div>
-              <div class="lens-tag">4X DETAIL</div>
+          <!-- Resemblance Slider -->
+          <div class="slider-block">
+            <div class="slider-head">
+              <label for="slider-resemblance">Resemblance (Parecido al Original)</label>
+              <span class="slider-badge" id="resemblance-val">8</span>
             </div>
+            <input type="range" id="slider-resemblance" min="-10" max="10" value="8" step="1">
+            <p class="slider-micro-hint">Forzar adherencia a las líneas y cotas del render original.</p>
           </div>
 
-          <!-- Prompt Box -->
-          <div class="prompt-card">
-            <div class="prompt-header">
-              <div class="prompt-title">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m10 15 5-3-5-3v6Z"/></svg>
-                <span>Configuraci&oacute;n para Magnific AI / Krea / ComfyUI</span>
+          <!-- Fractality Slider -->
+          <div class="slider-block">
+            <div class="slider-head">
+              <label for="slider-fractality">Fractality (Micro-detalles)</label>
+              <span class="slider-badge" id="fractality-val">3</span>
+            </div>
+            <input type="range" id="slider-fractality" min="-10" max="10" value="3" step="1">
+            <p class="slider-micro-hint">Densidad de textura: poros de hormigón, vetas y reflejos.</p>
+          </div>
+        </div>
+
+        <!-- Mode-Specific Parameters (People in Relight / Lighting in Spaces) -->
+        <div class="section-card" id="mode-specific-card">
+          <div class="card-header">
+            <span class="card-title" id="mode-specific-title">Relight &amp; People Entourage</span>
+          </div>
+
+          <!-- People Options (Relight) -->
+          <div id="people-options-group" class="sub-group">
+            <label class="label-tiny">Tipo de Personas 3D a Integrar:</label>
+            <div class="pill-chip-container">
+              <button class="pill-chip active" data-person-style="architect">Arquitecto Casual</button>
+              <button class="pill-chip" data-person-style="couple">Pareja Caminando</button>
+              <button class="pill-chip" data-person-style="family">Grupo Familiar</button>
+            </div>
+            <div class="slider-block" style="margin-top: 0.6rem;">
+              <div class="slider-head">
+                <label for="slider-people-blend">Integración de Luz y Sombras</label>
+                <span class="slider-badge" id="people-blend-val">85%</span>
               </div>
-              <button class="btn btn-ghost btn-sm copy-btn" data-copy-target="wf3-prompt-text">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                Copiar
-              </button>
+              <input type="range" id="slider-people-blend" min="0" max="100" value="85">
             </div>
-            <p id="wf3-prompt-text" class="prompt-text">
-              Engine: Precision Upscale 4X | Creativity / Hallucination: 2 (Strict structural fidelity) | Resemblance: 85% | Prompt: "Macro architectural texture photograph, board-formed concrete porosity, micro air pockets, sharp cast-shadows on recessed seams, natural specular reflections on low-iron glass facades, realistic material patina."
-            </p>
+          </div>
+
+          <!-- Spaces Lighting Options -->
+          <div id="spaces-options-group" class="sub-group" style="display: none;">
+            <label class="label-tiny">Escenario de Iluminación:</label>
+            <div class="pill-chip-container">
+              <button class="pill-chip active" data-space-scene="midday">Sol Cenital</button>
+              <button class="pill-chip" data-space-scene="overcast">Nublado Suave</button>
+              <button class="pill-chip" data-space-scene="golden">Golden Hour</button>
+              <button class="pill-chip" data-space-scene="bluehour">Noche Azul</button>
+              <button class="pill-chip" data-space-scene="rainy">Lluvia &amp; Reflejos</button>
+            </div>
+          </div>
+
+          <!-- Video Options -->
+          <div id="video-options-group" class="sub-group" style="display: none;">
+            <label class="label-tiny">Parámetros de Animación:</label>
+            <div class="pill-chip-container">
+              <button class="pill-chip active" data-vid-mode="timelapse">Timelapse 24h</button>
+              <button class="pill-chip" data-vid-mode="wind">Viento en Árboles</button>
+            </div>
           </div>
         </div>
       </div>
-    </section>
 
-    <!-- Architecture Cheatsheet / Reference Modal or Bottom Banner -->
-    <section class="cheatsheet-section">
-      <div class="cheatsheet-card">
-        <h3>Resumen de Herramientas IA para Arquitectos</h3>
-        <div class="table-responsive">
-          <table class="tools-table">
-            <thead>
-              <tr>
-                <th>Workflow</th>
-                <th>Herramienta Recomendada</th>
-                <th>Ajuste Cr&iacute;tico</th>
-                <th>Resultado Esperado</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>1. Google Earth &rarr; Dron</strong></td>
-                <td>ChatGPT (DALL-E 3) / Midjourney <code>--cref</code></td>
-                <td>Strength: 35-45% (evitar deformar l&iacute;neas maestras)</td>
-                <td>Entorno real con vegetaci&oacute;n y carreteras en 4K</td>
-              </tr>
-              <tr>
-                <td><strong>2. Timelapse D&iacute;a / Noche</strong></td>
-                <td>Runway Gen-3 / Luma Dream Machine</td>
-                <td>C&aacute;mara fija (Motion: 0), First &amp; Last Frame</td>
-                <td>Encendido suave de iluminaci&oacute;n interior 3000K</td>
-              </tr>
-              <tr>
-                <td><strong>3. Micro-Enhancement</strong></td>
-                <td>Magnific AI / Krea / ComfyUI</td>
-                <td>Hallucination: 1 a 3 (jam&aacute;s sobrepasar 5)</td>
-                <td>Rugosidad de hormig&oacute;n y reflejos sin alterar planos</td>
-              </tr>
-            </tbody>
-          </table>
+      <!-- Action Button (Iconic Magnific CTA) -->
+      <div class="sidebar-action">
+        <button id="btn-magnify" class="btn-magnify">
+          <span class="btn-sparkle">&#9889;</span>
+          <span class="btn-text">Magnify</span>
+          <span class="btn-cost">&#9889; 5</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- CENTER VIEWPORT: The Iconic Interactive Split Canvas -->
+    <main class="magnific-viewport">
+      <!-- Floating Top Tool Pills -->
+      <div class="viewport-floating-nav">
+        <div class="view-mode-toggle">
+          <button class="view-btn active" id="btn-view-split" title="Deslizador Split Antes/Después">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="2" x2="12" y2="22"/><rect width="18" height="18" x="3" y="3" rx="2"/></svg>
+            Split Slider
+          </button>
+          <button class="view-btn" id="btn-view-lens" title="Lente de Aumento 4X">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Lente 4X
+          </button>
+          <button class="view-btn" id="btn-view-sidebyside" title="Lado a Lado">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="8" height="18" x="3" y="3" rx="1"/><rect width="8" height="18" x="13" y="3" rx="1"/></svg>
+            Side by Side
+          </button>
+        </div>
+
+        <div class="zoom-controls">
+          <button class="zoom-btn" id="zoom-fit">Fit</button>
+          <button class="zoom-btn active" id="zoom-100">100%</button>
+          <button class="zoom-btn" id="zoom-200">200%</button>
+        </div>
+
+        <div class="viewport-export-group">
+          <button id="btn-copy-prompt" class="btn-icon-subtle" title="Copiar Prompt Completo">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+          </button>
+          <button id="btn-download" class="btn-download-pill">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download
+          </button>
         </div>
       </div>
-    </section>
-  </main>
 
-  <footer class="app-footer">
-    <div class="footer-content">
-      <p>ArchFlow Studio &bull; Dise&ntilde;ado para Arquitectos y Dise&ntilde;adores &bull; Basado en las t&eacute;cnicas de <em>Show It Better</em></p>
-      <div class="footer-links">
-        <a href="https://github.com/alejagoguti-cpu/workflow" target="_blank" rel="noopener noreferrer">Repositorio GitHub: workflow</a>
+      <!-- Main Stage -->
+      <div class="viewport-stage" id="viewport-stage">
+        <div class="split-viewport-canvas" id="split-canvas-wrapper">
+          <!-- Canvas Base (Raw / Original) -->
+          <canvas id="canvas-original" width="1280" height="800"></canvas>
+          <!-- Canvas Overlay (Magnified 8K / AI Enhanced) -->
+          <canvas id="canvas-magnified" width="1280" height="800"></canvas>
+
+          <!-- Interactive Vertical Split Divider -->
+          <div class="magnific-divider" id="split-divider">
+            <div class="divider-line"></div>
+            <div class="divider-knob">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+
+          <!-- Magnifier Lens -->
+          <div class="magnific-lens" id="magnific-lens">
+            <div class="lens-crosshair-h"></div>
+            <div class="lens-crosshair-v"></div>
+            <span class="lens-badge">8K ULTRA</span>
+          </div>
+
+          <!-- Pill tags in viewport -->
+          <div class="viewport-tags">
+            <span class="tag-pill tag-original">Original (Clay / Shaded)</span>
+            <span class="tag-pill tag-magnified">Magnific Precision (8K)</span>
+          </div>
+
+          <!-- Loading state overlay -->
+          <div class="magnific-loader" id="magnific-loader">
+            <div class="loader-spinner"></div>
+            <p>Upscaling with Precision Archviz Engine...</p>
+            <span class="loader-sub">Generating board-formed pores, glass fresnel &amp; linen folds</span>
+          </div>
+        </div>
       </div>
-    </div>
-  </footer>
+
+      <!-- Floating Bottom Parameter Bar -->
+      <div class="viewport-bottom-bar">
+        <div class="status-meta">
+          <span class="meta-item"><strong>Engine:</strong> <span id="meta-engine">Precision Archviz</span></span>
+          <span class="meta-item"><strong>Creativity:</strong> <span id="meta-creativity">2 (Fidelidad 100%)</span></span>
+          <span class="meta-item"><strong>Resemblance:</strong> <span id="meta-resemblance">8</span></span>
+          <span class="meta-item"><strong>Scale:</strong> <span id="meta-scale">4x (3840 &times; 2400)</span></span>
+        </div>
+        <div class="status-hint">
+          <span>Arrastra el personaje en el lienzo para reposicionarlo</span>
+        </div>
+      </div>
+    </main>
+
+    <!-- RIGHT PANEL: Generations & History Drawer -->
+    <aside class="magnific-history" id="magnific-history">
+      <div class="history-header">
+        <span class="history-title">Generations</span>
+        <span class="badge-dim" id="history-count">3 items</span>
+      </div>
+
+      <div class="history-list" id="history-list">
+        <!-- History items rendered dynamically -->
+      </div>
+    </aside>
+  </div>
 
   <script src="app.js"></script>
 </body>
